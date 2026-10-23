@@ -9,6 +9,7 @@ linkedin-scraper-2026 - one command for everything.
   py li.py visit   [--max N] [--file F]   view profiles (they see you in "Who viewed")
   py li.py export                    data/profiles.json -> data/profiles.csv
   py li.py status                    what's been collected / scraped / visited
+  py li.py run     [--max N]         collect all connections + scrape next batch + CSV
 """
 import argparse
 import asyncio
@@ -30,6 +31,7 @@ def main():
     ct = sub.add_parser("contacts"); ct.add_argument("--max", type=int); ct.add_argument("--file")
     v = sub.add_parser("visit"); v.add_argument("--max", type=int); v.add_argument("--file")
     sub.add_parser("export"); sub.add_parser("status")
+    r = sub.add_parser("run"); r.add_argument("--max", type=int); r.add_argument("--no-contact", action="store_true")
     a = ap.parse_args()
 
     if a.cmd == "login":
@@ -43,6 +45,16 @@ def main():
         from li2026.runner import contacts_only; asyncio.run(contacts_only(a.file, a.max))
     elif a.cmd == "visit":
         from li2026.runner import visit; asyncio.run(visit(a.file, a.max))
+    elif a.cmd == "run":
+        from li2026.connections import collect
+        from li2026.runner import scrape
+
+        async def run_all():
+            print("Step 1/2: collecting all connections...")
+            await collect(None)
+            print("\nStep 2/2: scraping the next batch...")
+            await scrape(None, a.max, False, not a.no_contact)
+        asyncio.run(run_all())
     elif a.cmd == "export":
         from li2026.export import export; export()
     elif a.cmd == "status":

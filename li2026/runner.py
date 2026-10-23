@@ -7,6 +7,7 @@ from . import config, memory
 from .browser import open_browser, check_blocked, Blocked
 from .profile import scrape_profile, contact_info
 from .util import read_urls, pause
+from .export import export
 
 
 def _load():
@@ -34,6 +35,7 @@ async def scrape(urls_file=None, limit=None, refresh=False, contacts=True):
             try:
                 p = await scrape_profile(page, url, with_contact=contacts, debug_dir=config.DEBUG_DIR)
                 data[url] = p; _save(data); memory.log(url, "scrape")
+                export(quiet=True)          # CSV is always up to date, even if stopped mid-run
                 print(f"✓ {i}/{len(todo)} {p['name']} | {p['headline']} | {p['location'] or '-'} "
                       f"| exp {len(p['experience_raw'])} | edu {len(p['education_raw'])} "
                       f"| {p['email'] or 'no email'}")
@@ -43,7 +45,7 @@ async def scrape(urls_file=None, limit=None, refresh=False, contacts=True):
                 memory.log(url, "scrape", "error"); print(f"✗ {url}: {e}")
             if i < len(todo):
                 await asyncio.sleep(pause(config.SCRAPE_DELAY))
-    print(f"\nSaved to {config.PROFILES_JSON}  ·  run  py li.py export  for a CSV")
+    export()
 
 
 async def contacts_only(urls_file=None, limit=None):
@@ -59,7 +61,7 @@ async def contacts_only(urls_file=None, limit=None):
                 c = await contact_info(page, url)
             except Blocked as e:
                 print("✗", e); break
-            data[url].update(c); _save(data); memory.log(url, "contact")
+            data[url].update(c); _save(data); memory.log(url, "contact"); export(quiet=True)
             print(f"✓ {i}/{len(todo)} {data[url].get('name')}: {c['email'] or '(no email shared)'}")
             if i < len(todo):
                 await asyncio.sleep(pause(config.SCRAPE_DELAY))
