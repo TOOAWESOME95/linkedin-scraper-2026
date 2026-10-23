@@ -105,8 +105,8 @@ linkedin-scraper-2026/
 experience, education, skills, about, profile_url, scraped_at`
 
 Experience/education/skills keep LinkedIn's visible lines joined by ` | `, and
-`current_title` / `current_company` are worked out from them (both LinkedIn layouts —
-single role, and several roles grouped under one company — are handled).
+`current_title` / `current_company` are worked out from them (both LinkedIn layouts are handled:
+a single role, and several roles grouped under one company).
 
 ## Safety settings
 
@@ -135,15 +135,15 @@ options* → **Your name and headline**.
 | `Executable doesn't exist … chrome.exe` | `py -m playwright install chromium` |
 | `No session found` | `py li.py login` |
 | Logged out / blocked | `py li.py login` again; slow down; wait 24h |
-| Experience comes back empty | a copy of the page is saved in `data/debug/` — open an issue with it |
+| Experience comes back empty | a copy of the page is saved in `data/debug/`, so open an issue with it |
 
 Moving from `joeyism/linkedin_scraper`? Copy your `linkedin_session.json` to
-`data/session.json` — the format is the same.
+`data/session.json`, as the format is the same.
 
 ## Responsible use
 
 This automates a logged-in browser, which is against LinkedIn's User Agreement and
-can get an account restricted — keep the default limits. It only reads what *you*
+can get an account restricted, so keep the default limits. It only reads what *you*
 can already see as a logged-in member. Contact details are only collected where a
 connection has chosen to share them with their network; in the UK/EU, using
 personal email addresses for marketing is covered by GDPR and PECR. You are
