@@ -31,8 +31,10 @@ def current_role(exp):
     return "", ""
 
 
-def export():
+def export(quiet=False):
     if not config.PROFILES_JSON.exists():
+        if quiet:
+            return
         raise SystemExit("No profiles.json yet. Run:  py li.py scrape")
     data = json.loads(config.PROFILES_JSON.read_text(encoding="utf-8"))
     tidy = lambda xs: [x for x in (xs or []) if x not in SKIP]
@@ -54,4 +56,5 @@ def export():
     with config.PROFILES_CSV.open("w", encoding="utf-8-sig", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader(); w.writerows(rows)
-    print(f"✓ {len(rows)} rows written to {config.PROFILES_CSV}")
+    if not quiet:
+        print(f"✓ {len(rows)} people in {config.PROFILES_CSV}")

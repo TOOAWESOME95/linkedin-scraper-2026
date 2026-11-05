@@ -11,7 +11,8 @@ where older scrapers like `joeyism/linkedin_scraper` return `Unknown` / empty re
 | `scrape` | Visits each profile and extracts name, headline, location, about, experience, education, skills, and email/phone/websites (if shared with connections) |
 | `contacts` | Fetches just email/phone for people you've already scraped |
 | `visit` | Simply views profiles so you appear in their *Who viewed your profile* |
-| `export` | Turns the results into a spreadsheet-ready **CSV** |
+| `export` | Rebuilds the **CSV** (scrape already keeps it updated) |
+| `run` | Does it all: collect connections, scrape the next batch, update the CSV |
 | `status` | Shows what's collected, scraped and still to do |
 
 It **remembers** everyone it has touched (`data/visited.csv`), so re-running never
@@ -55,14 +56,26 @@ loads, the session is saved to `data/session.json` and you're done.
 
 ## Everyday use
 
+The simplest way: one command, once a day.
+
+```bat
+py li.py run
+```
+
+This collects **all** your connections, scrapes the next 80 people not yet done,
+and keeps `data/profiles.csv` updated after every profile (so if you stop it
+halfway, the CSV still has everyone done so far). Run it again tomorrow and it
+carries on where it left off.
+
+Or step by step:
+
 ```bat
 py li.py collect              :: get all your connections (or --max 50 to test)
-py li.py scrape               :: scrape the next 80 not yet done
-py li.py export               :: write data/profiles.csv
+py li.py scrape               :: scrape the next 80 not yet done (updates the CSV)
 py li.py status               :: see progress
 ```
 
-Run `scrape` once a day until `status` shows nothing left. Other options:
+Run `run` (or `scrape`) once a day until `status` shows nothing left. Other options:
 
 ```bat
 py li.py scrape --max 30              :: smaller batch
