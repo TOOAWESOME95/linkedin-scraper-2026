@@ -1,0 +1,16 @@
+# --- your personal data: NEVER commit ---
+data/*
+!data/.gitkeep
+session.json
+*_session.json
+*.csv
+profiles.json
+urls.txt
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
